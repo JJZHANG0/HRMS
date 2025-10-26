@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+*.pot
+
+# Virtual Environment
+STEMHUB/
+venv/
+ENV/
+env/
+
+# Frontend
+hrms-frontend/node_modules/
+hrms-frontend/build/
+hrms-frontend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Migrations (可选，如果想保留迁移文件则删除此行)
+# */migrations/__pycache__/
+
+# Media files (可根据需要调整)
+HRMS/media/resumes/
+HRMS/media/agreements/
+
