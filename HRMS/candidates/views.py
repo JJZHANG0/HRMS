@@ -54,7 +54,8 @@ class ResumeUploadView(APIView):
     permission_classes = [permissions.AllowAny]
 
     API_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-    API_KEY = "sk-a99ede93ae2948928ea5b10133538a9b"
+    API_KEY = os.environ.get("AI_API_KEY", "")
+    ADMIN_UPLOAD_PASSWORD = os.environ.get("UPLOAD_PASSWORD", "STEMHUB2025!")
     HEADERS = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {API_KEY}",
