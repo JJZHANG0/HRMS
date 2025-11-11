@@ -505,7 +505,7 @@ class MyFavoritesView(APIView):
             candidates_data = []
             for fav in favorites:
                 candidate = fav.candidate
-                serializer = CandidateSerializer(candidate)
+                serializer = CandidateSerializer(candidate, context={'request': request})
                 data = serializer.data
                 data['favorited_at'] = fav.created_at
                 data['is_favorited'] = True

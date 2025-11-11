@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import axios from "axios";
+import {http, getBackendFileUrl} from "../services/http";
 import {useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import AddCooperationModal from "../components/AddCooperationModal";
@@ -30,8 +30,8 @@ export default function Candidates() {
 
     const fetchCandidates = async () => {
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/candidates/");
-            const favRes = await axios.get("http://127.0.0.1:8000/api/candidates/favorites/my/", {
+            const res = await http.get("candidates/");
+            const favRes = await http.get("candidates/favorites/my/", {
                 params: {username}
             });
             
@@ -116,7 +116,7 @@ export default function Candidates() {
     // 🧠 更新评分
     const handleUpdateScore = async (id, newScore) => {
         try {
-            await axios.patch(`http://127.0.0.1:8000/api/candidates/${id}/`, {
+            await http.patch(`candidates/${id}/`, {
                 match_level: newScore,
             });
             setCandidates((prev) =>
@@ -139,7 +139,7 @@ export default function Candidates() {
         }
 
         try {
-            await axios.patch(`http://127.0.0.1:8000/api/candidates/${id}/`, {
+            await http.patch(`candidates/${id}/`, {
                 cooperation_status: newStatus,
             });
             setCandidates((prev) =>
@@ -159,7 +159,7 @@ export default function Candidates() {
     // ⭐ 收藏/取消收藏
     const handleToggleFavorite = async (candidateId) => {
         try {
-            const res = await axios.post("http://127.0.0.1:8000/api/candidates/favorites/toggle/", {
+            const res = await http.post("candidates/favorites/toggle/", {
                 username,
                 candidate_id: candidateId,
             });
@@ -528,10 +528,10 @@ export default function Candidates() {
                                     <button
                                         style={styles.viewBtn}
                                         onClick={() => {
-                                            const fullUrl = c.resume_file.startsWith("http")
-                                                ? c.resume_file
-                                                : `http://127.0.0.1:8000${c.resume_file}`;
-                                            window.open(fullUrl, "_blank", "noopener,noreferrer");
+                                            const fullUrl = getBackendFileUrl(c.resume_file);
+                                            if (fullUrl) {
+                                                window.open(fullUrl, "_blank", "noopener,noreferrer");
+                                            }
                                         }}
                                     >
                                         📄 查看简历

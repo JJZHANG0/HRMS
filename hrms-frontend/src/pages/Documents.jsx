@@ -1,8 +1,8 @@
 // src/pages/Documents.jsx
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
+import {http, getBackendFileUrl} from "../services/http";
 
 export default function Documents() {
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function Documents() {
 
     const fetchDocuments = async () => {
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/candidates/cooperations/");
+            const res = await http.get("candidates/cooperations/");
             // 只保留有协议文件的记录
             const withAgreements = res.data.filter(record => record.agreement_file);
             setDocuments(withAgreements);
@@ -62,8 +62,10 @@ export default function Documents() {
     // 打开协议文件
     const openAgreement = (fileUrl) => {
         if (!fileUrl) return;
-        const fullUrl = fileUrl.startsWith("http") ? fileUrl : `http://127.0.0.1:8000${fileUrl}`;
-        window.open(fullUrl, "_blank");
+        const fullUrl = getBackendFileUrl(fileUrl);
+        if (fullUrl) {
+            window.open(fullUrl, "_blank");
+        }
     };
 
     return (
@@ -155,9 +157,7 @@ export default function Documents() {
                                             style={styles.downloadBtn}
                                             onClick={() => {
                                                 const link = document.createElement('a');
-                                                link.href = doc.agreement_file.startsWith("http") 
-                                                    ? doc.agreement_file 
-                                                    : `http://127.0.0.1:8000${doc.agreement_file}`;
+                                                link.href = getBackendFileUrl(doc.agreement_file);
                                                 link.download = getFileName(doc.agreement_file);
                                                 link.click();
                                             }}

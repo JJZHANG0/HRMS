@@ -1,17 +1,8 @@
 // src/services/api.js
-import axios from "axios";
+import { http } from "./http";
 
-const API_BASE = "http://127.0.0.1:8000/api/accounts/";
+const ACCOUNT_PREFIX = "accounts/";
 
-export const api = axios.create({
-  baseURL: API_BASE,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export const registerUser = (userData) => http.post(`${ACCOUNT_PREFIX}register/`, userData);
 
-// 注册
-export const registerUser = (userData) => api.post("register/", userData);
-
-// 登录
-export const loginUser = (userData) => api.post("login/", userData);
+export const loginUser = (userData) => http.post(`${ACCOUNT_PREFIX}login/`, userData);

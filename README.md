@@ -107,7 +107,35 @@ npm install
 npm start
 ```
 
-### 4. 访问系统
+### 4. 使用 Docker Compose 部署（推荐）
+
+```bash
+# 回到项目根目录
+cd /path/to/HRMS
+
+# 创建生产环境变量
+cp .env.example .env   # 如果存在；否则手动创建
+
+# 构建并启动容器
+docker-compose up -d --build
+
+# 查看容器状态
+docker-compose ps
+```
+
+默认会启动以下服务：
+- `db`：MySQL 8.0
+- `backend`：Django + Gunicorn
+- `frontend`：React 构建产物 + Nginx
+- `proxy`：统一反向代理，转发 `/api/` 到后端
+
+如需关闭服务：
+
+```bash
+docker-compose down
+```
+
+### 5. 访问系统
 
 - **前端**: http://localhost:3000
 - **后端**: http://127.0.0.1:8000

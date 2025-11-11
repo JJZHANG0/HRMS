@@ -1,7 +1,7 @@
 // src/pages/Settings.jsx
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import {http} from "../services/http";
 import Navbar from "../components/Navbar";
 
 export default function Settings() {
@@ -43,7 +43,7 @@ export default function Settings() {
 
     const fetchStats = async () => {
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/candidates/stats/");
+            const res = await http.get("candidates/stats/");
             setStats(res.data);
         } catch (err) {
             console.error("获取统计数据失败:", err);
@@ -53,7 +53,7 @@ export default function Settings() {
     // 检查用户权限
     const checkPermission = async () => {
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/accounts/check-permission/", {
+            const res = await http.get("accounts/check-permission/", {
                 params: {username}
             });
             setIsSuperuser(res.data.is_superuser);
@@ -76,7 +76,7 @@ export default function Settings() {
 
         setLoading(true);
         try {
-            await axios.post("http://127.0.0.1:8000/api/accounts/change-password/", {
+            await http.post("accounts/change-password/", {
                 old_password: passwordForm.oldPassword,
                 new_password: passwordForm.newPassword,
             });
@@ -93,7 +93,7 @@ export default function Settings() {
     const handleExportExcel = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/candidates/export/", {
+            const res = await http.get("candidates/export/", {
                 responseType: "blob",
             });
             const url = window.URL.createObjectURL(new Blob([res.data]));

@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: hrms_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hrms}
+      MYSQL_USER: ${MYSQL_USER:-hrms}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-hrms_password}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  backend:
+    build:
+      context: .
+      dockerfile: HRMS/Dockerfile
+    container_name: hrms_backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-mysql://hrms:hrms_password@db:3306/hrms}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-*}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-False}
+    depends_on:
+      - db
+    volumes:
+      - media_data:/app/media
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: hrms-frontend/Dockerfile
+    container_name: hrms_frontend
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  proxy:
+    image: nginx:alpine
+    container_name: hrms_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  mysql_data:
+  media_data:

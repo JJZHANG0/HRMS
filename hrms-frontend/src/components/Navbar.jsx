@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 import React, {useState, useRef} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import {http} from "../services/http";
 import UploadProgressModal from "./UploadProgressModal";
 
 // 密码验证弹窗
@@ -128,8 +128,8 @@ export default function Navbar({username, activeMenu, onMenuChange}) {
             formData.append("files", file);
 
             try {
-                const res = await axios.post(
-                    "http://127.0.0.1:8000/api/candidates/upload/",
+                const res = await http.post(
+                    "candidates/upload/",
                     formData,
                     {headers: {"Content-Type": "multipart/form-data"}}
                 );

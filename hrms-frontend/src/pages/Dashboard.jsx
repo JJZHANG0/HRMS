@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
+import {http} from "../services/http";
 import Navbar from "../components/Navbar";
 
 export default function Dashboard() {
@@ -23,7 +23,7 @@ export default function Dashboard() {
 
     const fetchStats = async () => {
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/candidates/stats/");
+            const res = await http.get("candidates/stats/");
             setStats(res.data);
         } catch (err) {
             console.error("获取统计数据失败:", err);

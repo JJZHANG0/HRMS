@@ -1,6 +1,6 @@
 // src/components/AddCooperationModal.jsx
 import React, {useState} from "react";
-import axios from "axios";
+import {http} from "../services/http";
 
 export default function AddCooperationModal({visible, candidate, onClose, onSuccess}) {
     const [formData, setFormData] = useState({
@@ -40,12 +40,12 @@ export default function AddCooperationModal({visible, candidate, onClose, onSucc
             data.append("cooperation_result", formData.cooperation_result);
             if (agreementFile) data.append("agreement_file", agreementFile);
 
-            await axios.post("http://127.0.0.1:8000/api/candidates/cooperations/", data, {
+            await http.post("candidates/cooperations/", data, {
                 headers: {"Content-Type": "multipart/form-data"},
             });
 
             // 同时更新候选人的合作状态为"合作"
-            await axios.patch(`http://127.0.0.1:8000/api/candidates/${candidate.id}/`, {
+            await http.patch(`candidates/${candidate.id}/`, {
                 cooperation_status: "合作",
             });
 

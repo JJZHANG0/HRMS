@@ -1,6 +1,6 @@
 // src/pages/CooperationRecords.jsx
 import React, {useEffect, useState} from "react";
-import axios from "axios";
+import {http, getBackendFileUrl} from "../services/http";
 import {useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
 
@@ -22,7 +22,7 @@ export default function CooperationRecords() {
 
     const fetchRecords = async () => {
         try {
-            const res = await axios.get("http://127.0.0.1:8000/api/candidates/cooperations/");
+            const res = await http.get("candidates/cooperations/");
             setRecords(res.data);
             setFiltered(res.data);
         } catch (err) {
@@ -184,7 +184,7 @@ export default function CooperationRecords() {
                                             {record.agreement_file && (
                                                 <button
                                                     style={styles.viewAgreementBtn}
-                                                    onClick={() => window.open(record.agreement_file, "_blank")}
+                                                    onClick={() => window.open(getBackendFileUrl(record.agreement_file), "_blank")}
                                                 >
                                                     📄 查看兼职协议
                                                 </button>

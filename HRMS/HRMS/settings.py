@@ -16,6 +16,7 @@ import pymysql
 pymysql.install_as_MySQLdb()
 from datetime import timedelta
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@5xdebj+r=p#nl@xince(&2o9iq3#3x=e8$-srtcau_lwedkxh'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-@5xdebj+r=p#nl@xince(&2o9iq3#3x=e8$-srtcau_lwedkxh')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',') if host.strip()]
 
 
 # Application definition
@@ -83,27 +84,29 @@ WSGI_APPLICATION = 'HRMS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.mysql')
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'HRMS',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-        'USER': 'root',
-        'PASSWORD': 'Aa123456',
-        'OPTIONS': {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+if DB_ENGINE == 'django.db.backends.sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.environ.get('SQLITE_DB_PATH', BASE_DIR / 'db.sqlite3'),
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': os.environ.get('MYSQL_DATABASE', 'HRMS'),
+            'HOST': os.environ.get('MYSQL_HOST', 'db'),
+            'PORT': int(os.environ.get('MYSQL_PORT', 3306)),
+            'USER': os.environ.get('MYSQL_USER', 'hrms'),
+            'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'hrms_password'),
+            'OPTIONS': {
+                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+            },
+        }
+    }
 
 
 # Password validation
@@ -143,6 +146,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -157,9 +165,11 @@ REST_FRAMEWORK = {
 }
 
 
-# 允许本地前端访问
-CORS_ALLOW_ALL_ORIGINS = True  # 开发阶段可用
-X_FRAME_OPTIONS = 'ALLOWALL'
+# CORS
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True').lower() in ('1', 'true', 'yes')
+if not CORS_ALLOW_ALL_ORIGINS:
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip() for origin in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if origin.strip()
+    ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+X_FRAME_OPTIONS = 'ALLOWALL'
