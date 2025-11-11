@@ -36,8 +36,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: hrms-frontend/Dockerfile
+      context: ./hrms-frontend
+      dockerfile: Dockerfile
     container_name: hrms_frontend
     restart: unless-stopped
     expose:
