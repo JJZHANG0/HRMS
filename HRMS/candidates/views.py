@@ -20,6 +20,24 @@ logging.getLogger("pdfminer").setLevel(logging.ERROR)
 
 
 # ✅ 日期格式修复函数
+
+
+def safe_int(value):
+    """将字符串或其它格式安全转换为整数，失败则返回 None"""
+    if value is None:
+        return None
+    if isinstance(value, int):
+        return value
+    try:
+        value = str(value).strip()
+        if not value:
+            return None
+        match = re.search(r"\d+", value)
+        return int(match.group()) if match else None
+    except Exception:
+        return None
+
+
 def normalize_date(value):
     """将 AI 返回的毕业时间统一为 YYYY-MM-DD 格式"""
     if not value:
@@ -102,7 +120,7 @@ class ResumeUploadView(APIView):
                 candidate = Candidate.objects.create(
                     name=result_json.get("name", ""),
                     gender=result_json.get("gender", ""),
-                    age=result_json.get("age"),
+                    age=safe_int(result_json.get("age")),
                     phone=result_json.get("phone", ""),
                     email=result_json.get("email", ""),
                     major=result_json.get("major", ""),

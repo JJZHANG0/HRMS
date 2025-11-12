@@ -54,6 +54,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - media_data:/app/media
     depends_on:
       - backend
       - frontend
