@@ -42,7 +42,13 @@ export default function Register() {
         }
 
         try {
-            const res = await registerUser(formData);
+            const payload = {
+                username: formData.username,
+                email: formData.email,
+                password: formData.password,
+                password2: formData.password2,
+            };
+            const res = await registerUser(payload);
             setModalMessage("✅ 注册成功！请登录");
             setTimeout(() => navigate("/login"), 1500);
         } catch (err) {
